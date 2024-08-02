@@ -1,0 +1,296 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:root {
+    --neon-green: #0f0;
+    --neon-blue: #0ff;
+    --neon-red: rgb(255, 136, 0);
+    --bg-color: #000;
+}
+
+#podcast-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 600px;
+}
+
+#rss-url {
+    flex-grow: 1;
+    padding: 10px;
+    font-family: 'VT323', monospace;
+    font-size: 1em;
+    background-color: rgba(0, 255, 0, 0.1);
+    border: 2px solid var(--neon-green);
+    color: var(--neon-green);
+}
+
+#podcast-form button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    font-family: 'VT323', monospace;
+    font-size: 1em;
+    background-color: var(--neon-green);
+    color: var(--bg-color);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#podcast-form button:hover {
+    background-color: var(--neon-blue);
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+
+body, html {
+    min-height: 100%;
+    margin: 0;
+    font-family: 'VT323', monospace;
+    background-color: var(--bg-color);
+    color: var(--neon-green);
+    overflow-x: hidden;
+    overflow-y: auto;
+    perspective: 1000px;
+}
+
+.container {
+    max-width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* Retro Grid Background */
+.retro-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background-image: 
+        linear-gradient(to right, var(--neon-green) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--neon-green) 1px, transparent 1px);
+    background-size: 50px 50px;
+    transform: rotateX(60deg) scale(2);
+    animation: gridMove 5s linear infinite;
+    opacity: 0.2;
+    z-index: -1;
+}
+
+@keyframes gridMove {
+    0% { transform: rotateX(60deg) translateY(0) scale(2); }
+    100% { transform: rotateX(60deg) translateY(-50px) scale(2); }
+}
+
+/* Flying Objects */
+.flying-object {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: var(--neon-blue);
+    border-radius: 50%;
+    filter: blur(2px);
+    opacity: 0.7;
+    z-index: -1;
+}
+
+/* Wireframe Mountains */
+.mountains {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    z-index: -1;
+}
+
+.mountain {
+    position: absolute;
+    bottom: 0;
+    border-style: solid;
+    border-width: 0 100px 173.2px 100px;
+    border-color: transparent transparent var(--neon-green) transparent;
+}
+
+/* Scanner Effect */
+.scanner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, 
+        rgba(15, 255, 15, 0) 0%,
+        rgba(15, 255, 15, 0.1) 50%,
+        rgba(15, 255, 15, 0) 100%);
+    animation: scan 5s ease-in-out infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes scan {
+    0%, 100% { transform: translateY(-100%); }
+    50% { transform: translateY(100%); }
+}
+
+h1 {
+    text-align: center;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+    font-size: 3em;
+    margin-bottom: 30px;
+    animation: glitch 5s infinite;
+}
+
+@keyframes glitch {
+    0%, 100% { transform: none; text-shadow: none; }
+    20% { transform: skewX(-15deg); text-shadow: -2px 0 var(--neon-red); }
+    40% { transform: skewX(15deg); text-shadow: 2px 0 var(--neon-blue); }
+    60% { transform: skewX(-10deg); text-shadow: 4px 0 var(--neon-green); }
+    80% { transform: skewX(10deg); text-shadow: -4px 0 var(--neon-blue); }
+}
+
+#player {
+    background-color: rgba(0, 255, 0, 0.1);
+    border: 2px solid var(--neon-green);
+    border-radius: 0;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 20px var(--neon-green);
+    animation: pulse 4s infinite alternate;
+    width: 100%;
+    max-width: 600px;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 20px var(--neon-green); }
+    100% { box-shadow: 0 0 40px var(--neon-blue); }
+}
+
+#player audio {
+    width: 100%;
+    margin-top: 10px;
+    filter: sepia(100%) saturate(400%) grayscale(0) contrast(200%) hue-rotate(70deg);
+}
+
+#nowPlaying {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: var(--neon-blue);
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
+#episodes {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.episode {
+    border: 2px solid var(--neon-green);
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: borderPulse 4s infinite alternate;
+}
+
+@keyframes borderPulse {
+    0% { border-color: var(--neon-green); }
+    50% { border-color: var(--neon-blue); }
+    100% { border-color: var(--neon-red); }
+}
+
+.episode:hover {
+    box-shadow: 0 0 15px var(--neon-blue);
+    transform: scale(1.05);
+}
+
+.episode-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+.episode-header:hover {
+    background-color: rgba(0, 255, 255, 0.2);
+}
+
+.episode h2 {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--neon-blue);
+}
+
+.episode-content {
+    padding: 15px;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.dropdown-arrow {
+    transition: transform 0.3s;
+    color: var(--neon-green);
+}
+
+.dropdown-arrow.open {
+    transform: rotate(180deg);
+}
+
+#pager {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 10;
+    min-height: 50px;
+    border: 1px solid var(--neon-green);
+    padding: 10px;
+    width: 100%;
+    max-width: 600px;
+}
+
+#pager button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: var(--neon-green);
+    color: var(--bg-color);
+    border: none;
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    font-size: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#pager button:hover {
+    background-color: var(--neon-blue);
+    color: var(--bg-color);
+    box-shadow: 0 0 10px var(--neon-blue);
+    transform: scale(1.1);
+}
+
+#pager span {
+    margin: 0 10px;
+    color: var(--neon-blue);
+    font-size: 1em;
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
+@keyframes buttonShine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}

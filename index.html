@@ -3,178 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Podcast RSS Player</title>
+    <title>Retro-wave Battlezone Podcast Player</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        #player {
-            margin-bottom: 20px;
-        }
-        #player audio {
-            width: 100%;
-        }
-        #episodes {
-            margin-top: 20px;
-        }
-        .episode {
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-        }
-        .episode-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            cursor: pointer;
-            background-color: #f0f0f0;
-        }
-        .episode-header:hover {
-            background-color: #e0e0e0;
-        }
-        .episode h2 {
-            margin: 0;
-            font-size: 1.1em;
-        }
-        .episode-content {
-            padding: 10px;
-            display: none;
-        }
-        .dropdown-arrow {
-            transition: transform 0.3s;
-        }
-        .dropdown-arrow.open {
-            transform: rotate(180deg);
-        }
-        #nowPlaying {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        #pager {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        #pager button {
-            margin: 0 5px;
-            padding: 5px 10px;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
 </head>
 <body>
-    <h1>Podcast RSS Player</h1>
-    <div id="player">
-        <div id="nowPlaying"></div>
-        <audio controls></audio>
+    <div class="retro-grid"></div>
+    <div class="container">
+        <h1>HyperCatcher Podcast Player</h1>
+        <div id="podcast-form">
+            <input type="text" id="rss-url" placeholder="Enter podcast RSS feed URL">
+            <button onclick="loadPodcast()">Load Podcast</button>
+        </div>
+        <div id="player" style="display: none;">
+            <div id="nowPlaying"></div>
+            <audio controls></audio>
+        </div>
+        <div id="episodes"></div>
+        <div id="pager" style="display: none;"></div>
     </div>
-    <div id="episodes"></div>
-    <div id="pager"></div>
-
-    <script>
-        let episodes = [];
-        let currentPage = 1;
-        const episodesPerPage = 10;
-
-        function playEpisode(index, event) {
-            event.stopPropagation();
-            const episode = episodes[index];
-            const player = document.querySelector('#player audio');
-            const nowPlaying = document.getElementById('nowPlaying');
-            
-            player.src = episode.audioUrl;
-            player.play();
-            nowPlaying.textContent = `Now Playing: ${episode.title}`;
-        }
-
-        function toggleEpisode(index) {
-            const content = document.getElementById(`episode-content-${index}`);
-            const arrow = document.getElementById(`dropdown-arrow-${index}`);
-            if (content.style.display === 'none' || content.style.display === '') {
-                content.style.display = 'block';
-                arrow.classList.add('open');
-            } else {
-                content.style.display = 'none';
-                arrow.classList.remove('open');
-            }
-        }
-
-        function displayEpisodes() {
-            const startIndex = (currentPage - 1) * episodesPerPage;
-            const endIndex = startIndex + episodesPerPage;
-            const currentEpisodes = episodes.slice(startIndex, endIndex);
-
-            const episodesHTML = currentEpisodes.map((episode, index) => `
-                <div class="episode">
-                    <div class="episode-header" onclick="toggleEpisode(${startIndex + index})">
-                        <h2>${episode.title}</h2>
-                        <span id="dropdown-arrow-${startIndex + index}" class="dropdown-arrow">▼</span>
-                    </div>
-                    <div id="episode-content-${startIndex + index}" class="episode-content" style="display: none;">
-                        <p>${episode.description}</p>
-                        <button onclick="playEpisode(${startIndex + index}, event)">Play Episode</button>
-                    </div>
-                </div>
-            `).join('');
-
-            document.getElementById('episodes').innerHTML = episodesHTML;
-            updatePager();
-        }
-
-        function updatePager() {
-            const totalPages = Math.ceil(episodes.length / episodesPerPage);
-            let pagerHTML = '';
-
-            if (currentPage > 1) {
-                pagerHTML += `<button onclick="changePage(${currentPage - 1})">Previous</button>`;
-            }
-
-            pagerHTML += `<span>Page ${currentPage} of ${totalPages}</span>`;
-
-            if (currentPage < totalPages) {
-                pagerHTML += `<button onclick="changePage(${currentPage + 1})">Next</button>`;
-            }
-
-            document.getElementById('pager').innerHTML = pagerHTML;
-        }
-
-        function changePage(newPage) {
-            currentPage = newPage;
-            displayEpisodes();
-        }
-
-        async function fetchAndDisplayPodcast() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const rssUrl = urlParams.get('rssUrl') || 'https://feeds.simplecast.com/54nAGcIl';
-
-            try {
-                const response = await axios.get(rssUrl);
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(response.data, "text/xml");
-
-                const items = xmlDoc.getElementsByTagName('item');
-                episodes = Array.from(items).map(item => ({
-                    title: item.getElementsByTagName('title')[0].textContent,
-                    description: item.getElementsByTagName('description')[0].textContent,
-                    audioUrl: item.getElementsByTagName('enclosure')[0].getAttribute('url')
-                }));
-
-                displayEpisodes();
-
-                // Play the first episode by default
-                if (episodes.length > 0) {
-                    playEpisode(0, new Event('click'));
-                }
-            } catch (error) {
-                console.error('Error fetching or parsing RSS feed:', error);
-                document.getElementById('episodes').innerHTML = '<p>Error fetching or parsing the RSS feed. Please check the URL and try again.</p>';
-            }
-        }
-
-        fetchAndDisplayPodcast();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
